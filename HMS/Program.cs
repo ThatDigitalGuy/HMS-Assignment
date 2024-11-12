@@ -1,9 +1,15 @@
-﻿namespace HMS;
+﻿using Newtonsoft.Json;
+using System;
+using HMS.classes;
+
+namespace HMS;
 
 class Program
 {
     static void Main(string[] args)
     {
-        Console.WriteLine("Hello, World!");
+        Utility utility = new Utility();
+        
+        utility.InitialiseApplication();
     }
 }
