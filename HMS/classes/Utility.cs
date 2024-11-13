@@ -92,7 +92,7 @@ public class Utility
             userObj.Add(new Authentication
             {
                 Id = "001", Name = "Administrator", Email = "admin@admin.com", Password = "admin", Phone = "000000000",
-                Appointments = [], Address = [], Notes = []
+                Groups = ["global.administrator"]
             });
             
             // Serialise to json
@@ -109,9 +109,42 @@ public class Utility
 
     #endregion
 
-    void WriteToLogFile(string data)
+    // Global Write to the Log File.
+    public void WriteToLogFile(string data)
     {
-        File.AppendAllText(_logFilePath, data + '\n');
+        try
+        {
+            File.AppendAllText(_logFilePath, data + '\n');
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("Log File Mission or Gone.");
+            if (!Directory.Exists(_logDirectory))
+            {
+                Directory.CreateDirectory(_logDirectory);
+            }
+
+            if (!File.Exists(_logFilePath))
+            {
+                File.Create(_logFilePath).Close();
+       
+                // File.AppendText()
+                // _logWriter = new StreamWriter(_logFilePath);
+                //
+                // _logWriter.Write($"[LOG > APP | START-UP] Created '{_logDirectory}' directory and '{_logFilePath}' file.");
+                WriteToLogFile($"[LOG > APP | START-UP] Created '{_logDirectory}' directory and '{_logFilePath}' file.");
+            }
+            WriteToLogFile(e.ToString());
+            throw;
+        }
     }
     
+    
+    // Pulls the authentication users from auth file.
+    public void ReadFromAuthFile()
+    {
+        string jsonString = File.ReadAllText(_authFilePath);
+        
+        Console.WriteLine(jsonString);
+    }
 }

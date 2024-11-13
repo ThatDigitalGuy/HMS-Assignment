@@ -1,16 +1,36 @@
 ﻿using Newtonsoft.Json;
-using System;
 
 namespace HMS.classes;
 
 public class Authentication
 {
-    public string Id { get; set; }
-    public string Name { get; set; }
-    public string Email { get; set; }
-    public string Password { get; set; }
-    public string Phone { get; set; }
-    public string[] Address { get; set; }
-    public List<Dictionary<string,string>> Notes { get; set; }
-    public List<Dictionary<string,string>> Appointments { get; set; }
+    Utility _utils = new Utility();
+    
+    internal bool IsAuthenticated = false;
+    // The data structure for authentication class
+    #region AuthenticationProps
+
+    public required string Id { get; set; }
+    public required string Name { get; set; }
+    public required string Email { get; set; }
+    public required string Password { get; set; }
+    public required string Phone { get; set; }
+    public required string[] Groups { get; set; }
+
+    #endregion
+
+    // Validates the user permissions for the task they are trying to
+    public bool ValidateUserPermissions(string userId, string[] activityPermissions)
+    {
+        return false;
+    }
+
+    public List<Authentication>? SignInUser(string email, string password)
+    {
+        _utils.WriteToLogFile($"[APP | AUTH] Trying to authenticate user with the email '{email}'.");
+        
+        
+        
+        return null;
+    }
 }
