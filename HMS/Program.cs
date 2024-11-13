@@ -99,6 +99,9 @@ class Program
                     case "0":
                         auth.SignOutUser();
                         break;
+                    case "1":
+                        auth.CreateStaffUser("Test User", "test@test.com", "00000000", ["global.nurse"]);
+                        break;
                     default:
                         Console.BackgroundColor = ConsoleColor.Red;
                         Console.Clear();

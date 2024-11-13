@@ -98,7 +98,7 @@ public class Utility
             
             // Serialise to json
             string jsonString = JsonConvert.SerializeObject(userObj, Formatting.Indented);
-            File.WriteAllText(AuthFilePath, jsonString);
+            File.AppendAllText(AuthFilePath, jsonString);
         }
         else
         {
@@ -147,5 +147,13 @@ public class Utility
         string jsonString = File.ReadAllText(AuthFilePath);
         
         Console.WriteLine(jsonString);
+    }
+    
+    // Generate random password
+    public string GenerateRandomPassword()
+    {
+        var rand = new Random();
+
+        return rand.Next(10000, 100000).ToString();
     }
 }

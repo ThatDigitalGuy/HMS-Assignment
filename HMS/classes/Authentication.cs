@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.VisualBasic.CompilerServices;
+using Newtonsoft.Json;
 using DateTime = System.DateTime;
 
 namespace HMS.classes;
@@ -20,12 +21,12 @@ public class Authentication
 
     #endregion
 
-    // Validates the user permissions for the task they are trying to
+    // TODO: Validates the user permissions for the task they are trying to
     public bool ValidateUserPermissions(string userId, string[] activityPermissions)
     {
         return false;
     }
-
+    
     public bool SignInUser(string email, string password)
     {
         // Logs the attempt to sign in
@@ -57,7 +58,7 @@ public class Authentication
                 break;
             }
 
-            return false;
+            
         }
 
         return false;
@@ -82,5 +83,28 @@ public class Authentication
         }
     }
     
-    
+    // TODO: Create a new staff member
+    public void CreateStaffUser(string name, string email, string phone, string[] groups)
+    {
+        Console.Clear();
+        _utils.WriteToLogFile($"(AUTH) The user {Name} ({Id}) has submitted a user ({email}) for the system to create.");
+        var jsonString = File.ReadAllText(_utils.AuthFilePath);
+        List<Authentication> userObj = JsonConvert.DeserializeObject<List<Authentication>>(jsonString);
+
+        var rand = new Random();
+
+        string genId = rand.Next(1000, 10000).ToString();
+        string genPwd = _utils.GenerateRandomPassword();
+
+        // Creating a default admin user
+        userObj.Add(new Authentication
+        {
+            Id = genId, Name = name, Email = email, Password = genPwd, Phone = phone,
+            Groups = groups
+        });
+            
+        // Serialise to json
+        jsonString = JsonConvert.SerializeObject(userObj, Formatting.Indented);
+        File.WriteAllText(_utils.AuthFilePath, jsonString);
+    }
 }
