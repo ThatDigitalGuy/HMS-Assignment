@@ -6,7 +6,7 @@ public class Utility
 {
     #region UtitlityVariables
 
-    private string _authFilePath = "./auth.json";
+    public string AuthFilePath = "./auth.json";
     private string _patientDirectory = "./Patients";
     private string _logDirectory = "./Logs";
     // Learnt DateTime from https://www.c-sharpcorner.com/blogs/date-and-time-format-in-c-sharp-programming1
@@ -66,16 +66,16 @@ public class Utility
 
         #region AuthFileExists
 
-        if (!File.Exists(_authFilePath))
+        if (!File.Exists(AuthFilePath))
         {
-            WriteToLogFile($"[APP | Start-up] INFO > '{_authFilePath}' folder doesn't exist. Creating...");
+            WriteToLogFile($"[APP | Start-up] INFO > '{AuthFilePath}' folder doesn't exist. Creating...");
             
             // Create the auth.json file
-            File.Create(_authFilePath).Close();
+            File.Create(AuthFilePath).Close();
         }
         else
         {
-            Console.WriteLine($"[APP | Start-up] INFO > '{_authFilePath}' folder exists.");
+            Console.WriteLine($"[APP | Start-up] INFO > '{AuthFilePath}' folder exists.");
 
         }
 
@@ -83,9 +83,9 @@ public class Utility
 
         #region CheckAuthFile
 
-        if (File.ReadAllText(_authFilePath) == "")
+        if (File.ReadAllText(AuthFilePath) == "")
         {
-            WriteToLogFile($"[APP | Start-up] INFO > '{_authFilePath}' is empty. Creating new admin user...");
+            WriteToLogFile($"[APP | Start-up] INFO > '{AuthFilePath}' is empty. Creating new admin user...");
             List<Authentication> userObj = new List<Authentication>();
             
             // Creating a default admin user
@@ -97,11 +97,11 @@ public class Utility
             
             // Serialise to json
             string jsonString = JsonConvert.SerializeObject(userObj, Formatting.Indented);
-            File.WriteAllText(_authFilePath, jsonString);
+            File.WriteAllText(AuthFilePath, jsonString);
         }
         else
         {
-            WriteToLogFile($"[APP | Start-up] INFO > '{_authFilePath}' has content.");
+            WriteToLogFile($"[APP | Start-up] INFO > '{AuthFilePath}' has content.");
         }
 
         #endregion
@@ -143,7 +143,7 @@ public class Utility
     // Pulls the authentication users from auth file.
     public void ReadFromAuthFile()
     {
-        string jsonString = File.ReadAllText(_authFilePath);
+        string jsonString = File.ReadAllText(AuthFilePath);
         
         Console.WriteLine(jsonString);
     }

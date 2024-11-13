@@ -20,7 +20,7 @@ class Program
         };
         
         utility.InitialiseApplication();
-
+        
         while (!auth.IsAuthenticated)
         {
             Console.Clear();
@@ -34,6 +34,8 @@ class Program
             
             // Password
             Console.Write("Password: ");
+            string? password = "";
+            // Found information about this on https://stackoverflow.com/questions/23433980/c-sharp-console-hide-the-input-from-console-window-while-typing
             while (true)
             {
                 ConsoleKeyInfo key = Console.ReadKey(true);
@@ -41,10 +43,26 @@ class Program
                 {
                     break;
                 }
-                Console.WriteLine(key.KeyChar);
+                password += key.KeyChar.ToString();
             }
-            
-            
+
+            if (email == "" || password == "")
+            {
+                Console.Clear();
+                Console.Write("\n");
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Invalid credentials entered. Please try again.\n");
+                Console.ResetColor();
+                Console.WriteLine("Press any key to return to login again.");
+                Console.Write("\n");
+                Console.ReadKey();
+            }
+            else
+            {
+                auth = auth.SignInUser(email, password);
+            }
         }
+        
+        Console.WriteLine(auth.Name);
     }
 }
