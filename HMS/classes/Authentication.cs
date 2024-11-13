@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using DateTime = System.DateTime;
 
 namespace HMS.classes;
 
@@ -6,16 +7,16 @@ public class Authentication
 {
     Utility _utils = new Utility();
     
-    internal bool IsAuthenticated = false;
     // The data structure for authentication class
     #region AuthenticationProps
 
-    public required string Id { get; set; }
-    public required string Name { get; set; }
-    public required string Email { get; set; }
-    public required string Password { get; set; }
-    public required string Phone { get; set; }
-    public required string[] Groups { get; set; }
+    public bool IsAuthenticated { get; set; } = false;
+    public string Id { get; set; } = string.Empty;
+    public string Name { get; set; } = string.Empty;
+    public string Email { get; set; } = string.Empty;
+    public string Password { get; set; } = string.Empty;
+    public string Phone { get; set; } = string.Empty;
+    public string[] Groups { get; set; } = Array.Empty<string>();
 
     #endregion
 
@@ -25,46 +26,61 @@ public class Authentication
         return false;
     }
 
-    public Authentication SignInUser(string email, string password)
+    public bool SignInUser(string email, string password)
     {
-        _utils.WriteToLogFile($"[APP | AUTH] Trying to authenticate user with the email '{email}'.");
+        // Logs the attempt to sign in
+        _utils.WriteToLogFile($"(AUTH) Trying to authenticate user with the email '{email}'.");
         
-        /*
-         * 1. Read the auth.json file.
-         * 2. Check the credentials sent.
-         * 3. If valid, return user object.
-         * 4. If invalid return null.
-         */
-
-        #region GetDataFromAuth
-
-        string jsonString = File.ReadAllText(_utils.AuthFilePath);
+        // Gets the file and reads all text
+        var jsonString = File.ReadAllText(_utils.AuthFilePath);
         
-        List<Authentication> persons = JsonConvert.DeserializeObject<List<Authentication>>(jsonString);
+        // Deserialises the auth.json file to a list.
+        List<Authentication> authList = JsonConvert.DeserializeObject<List<Authentication>>(jsonString);
 
-        foreach (Authentication person in persons)
+        // Checks if any record is valid
+        foreach (var user in authList)
         {
-            if (person.Email == email && person.Password == password)
+            // If there is a user, it sets the Current User details.
+            if (user.Email == email && user.Password == password)
             {
                 IsAuthenticated = true;
-
-                Authentication userObj = new Authentication
-                {
-                    Id = person.Id,
-                    Name = person.Name,
-                    Email = person.Email,
-                    Password = person.Password,
-                    Phone = person.Phone,
-                    Groups = person.Groups
-                };
-
-                return userObj;
+                Id = user.Id;
+                Name = user.Name;
+                Email = user.Email;
+                Phone = user.Phone;
+                Groups = user.Groups;
+                
+                _utils.WriteToLogFile($"(AUTH) {Name} ({Id}) has successfully logged in.");
+                
+                return true;
+                
+                break;
             }
+
+            return false;
         }
-        
-        
-        #endregion
-        
-        return null;
+
+        return false;
     }
+
+    // Signs the user out :D
+    public void SignOutUser()
+    {
+        if (IsAuthenticated)
+        {
+            _utils.WriteToLogFile($"(AUTH) {Name} ({Id}) has successfully logged out.");
+            
+            IsAuthenticated = false;
+            Id = String.Empty;
+            Name = String.Empty;
+            Email = String.Empty;
+            Phone = String.Empty;
+            Groups = Array.Empty<string>();
+        }
+        else
+        {
+        }
+    }
+    
+    
 }

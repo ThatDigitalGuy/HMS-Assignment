@@ -6,11 +6,12 @@ public class Utility
 {
     #region UtitlityVariables
 
+    public string LogPrefix = $"[{DateTime.UtcNow.ToString()}]";
     public string AuthFilePath = "./auth.json";
     private string _patientDirectory = "./Patients";
     private string _logDirectory = "./Logs";
     // Learnt DateTime from https://www.c-sharpcorner.com/blogs/date-and-time-format-in-c-sharp-programming1
-    private string _logFilePath = $"./Logs/log_{DateTime.Now.ToString("ddMMyyyy")}.txt";
+    internal string LogFilePath = $"./Logs/log_{DateTime.Now.ToString("ddMMyyyy")}.txt";
 
     #endregion
     
@@ -34,15 +35,15 @@ public class Utility
             Directory.CreateDirectory(_logDirectory);
         }
 
-        if (!File.Exists(_logFilePath))
+        if (!File.Exists(LogFilePath))
         {
-            File.Create(_logFilePath).Close();
+            File.Create(LogFilePath).Close();
        
             // File.AppendText()
-            // _logWriter = new StreamWriter(_logFilePath);
+            // _logWriter = new StreamWriter(LogFilePath);
             //
-            // _logWriter.Write($"[LOG > APP | START-UP] Created '{_logDirectory}' directory and '{_logFilePath}' file.");
-            WriteToLogFile($"[LOG > APP | START-UP] Created '{_logDirectory}' directory and '{_logFilePath}' file.");
+            // _logWriter.Write($"[LOG > APP | START-UP] Created '{_logDirectory}' directory and '{LogFilePath}' file.");
+            WriteToLogFile($"{LogPrefix} Created '{_logDirectory}' directory and '{LogFilePath}' file.");
         }
         
 
@@ -114,7 +115,7 @@ public class Utility
     {
         try
         {
-            File.AppendAllText(_logFilePath, data + '\n');
+            File.AppendAllText(LogFilePath, $"{LogPrefix}{data}\n");
         }
         catch (Exception e)
         {
@@ -124,15 +125,15 @@ public class Utility
                 Directory.CreateDirectory(_logDirectory);
             }
 
-            if (!File.Exists(_logFilePath))
+            if (!File.Exists(LogFilePath))
             {
-                File.Create(_logFilePath).Close();
+                File.Create(LogFilePath).Close();
        
                 // File.AppendText()
-                // _logWriter = new StreamWriter(_logFilePath);
+                // _logWriter = new StreamWriter(LogFilePath);
                 //
-                // _logWriter.Write($"[LOG > APP | START-UP] Created '{_logDirectory}' directory and '{_logFilePath}' file.");
-                WriteToLogFile($"[LOG > APP | START-UP] Created '{_logDirectory}' directory and '{_logFilePath}' file.");
+                // _logWriter.Write($"[LOG > APP | START-UP] Created '{_logDirectory}' directory and '{LogFilePath}' file.");
+                WriteToLogFile($"[LOG > APP | START-UP] Created '{_logDirectory}' directory and '{LogFilePath}' file.");
             }
             WriteToLogFile(e.ToString());
             throw;
