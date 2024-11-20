@@ -8,10 +8,11 @@ public class Utility
 
     public string LogPrefix = $"[{DateTime.UtcNow.ToString()}]";
     public string AuthFilePath = "./auth.json";
-    private string _patientDirectory = "./Patients";
+    public string patientDirectory = "./Patients";
     private string _logDirectory = "./Logs";
     // Learnt DateTime from https://www.c-sharpcorner.com/blogs/date-and-time-format-in-c-sharp-programming1
     internal string LogFilePath = $"./Logs/log_{DateTime.Now.ToString("ddMMyyyy")}.txt";
+    public string roleFilePath = "./roles.json";
 
     #endregion
     
@@ -52,16 +53,16 @@ public class Utility
         #region PatientFolderExist
 
         // Checks to see if the patient folder exists.
-        if (!Directory.Exists(_patientDirectory))
+        if (!Directory.Exists(patientDirectory))
         {
-            WriteToLogFile($"[APP | Start-up] INFO > '{_patientDirectory}' folder doesn't exist. Creating...");
+            WriteToLogFile($"[APP | Start-up] INFO > '{patientDirectory}' folder doesn't exist. Creating...");
             
             // Create a folder for the patient records.
-            Directory.CreateDirectory(_patientDirectory);
+            Directory.CreateDirectory(patientDirectory);
         }
         else
         {
-            Console.WriteLine($"[APP | Start-up] INFO > '{_patientDirectory}' folder exists.");
+            Console.WriteLine($"[APP | Start-up] INFO > '{patientDirectory}' folder exists.");
         }
         #endregion
 
@@ -93,7 +94,7 @@ public class Utility
             userObj.Add(new Authentication
             {
                 Id = "001", Name = "Administrator", Email = "admin@admin.com", Password = "admin", Phone = "000000000",
-                Groups = ["global.administrator"]
+                Group = "global.administrator"
             });
             
             // Serialise to json
@@ -103,6 +104,69 @@ public class Utility
         else
         {
             WriteToLogFile($"[APP | Start-up] INFO > '{AuthFilePath}' has content.");
+        }
+
+        #endregion
+
+        #region RolesFile
+
+        if (File.Exists(roleFilePath))
+        {
+            return;
+        }
+        else
+        {
+            try
+            {
+                File.Create(roleFilePath).Close();
+                
+                var jsonString = File.ReadAllText(roleFilePath);
+                List<Roles> userObj = new List<Roles>();
+                
+                userObj.Add(new Roles
+                {
+                    Id = "001",
+                    Name = "Global Administrator",
+                    PermissionName = "global.administrator",
+                    Permissions = [
+                        "global.administrator",
+                        "global.patient.administrator",
+                        "global.user.administrator",
+                        "global.medical.administrator",
+                        "global.pharmacy.administrator",
+                        "global.finance.administrator",
+                    ]
+                });
+                userObj.Add(new Roles
+                {
+                    Id = "001",
+                    Name = "Nurse",
+                    PermissionName = "global.nurse",
+                    Permissions = []
+                });
+                userObj.Add(new Roles
+                {
+                    Id = "002",
+                    Name = "Doctor",
+                    PermissionName = "global.doctor",
+                    Permissions = []
+                });
+                userObj.Add(new Roles
+                {
+                    Id = "003",
+                    Name = "Admin",
+                    PermissionName = "global.admin",
+                    Permissions = []
+                });
+                
+                jsonString = JsonConvert.SerializeObject(userObj, Formatting.Indented);
+                File.WriteAllText(roleFilePath, jsonString);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
         }
 
         #endregion
@@ -155,5 +219,162 @@ public class Utility
         var rand = new Random();
 
         return rand.Next(10000, 100000).ToString();
+    }
+    
+    public void CreatePatient(string userCreator)
+    {
+        Patient patient = new Patient();
+        // Patient Title
+        Console.WriteLine("Please enter the Title of the patient.");
+        string patientTitle = Console.ReadLine()!;
+
+        if (string.IsNullOrEmpty(patientTitle))
+        {
+            Console.BackgroundColor = ConsoleColor.Red;
+            Console.Clear();
+            Console.WriteLine("Invalid input entered. Press any key to continue.");
+            Console.ReadKey();
+            return;
+        }
+
+
+        // Patient Name
+        Console.WriteLine("Please enter the Name of the patient.");
+        string patientName = Console.ReadLine()!;
+
+        if (string.IsNullOrEmpty(patientName))
+        {
+            Console.BackgroundColor = ConsoleColor.Red;
+            Console.Clear();
+            Console.WriteLine("Invalid input entered. Press any key to continue.");
+            Console.ReadKey();
+            return;
+        }
+
+        // Patient Email
+        Console.WriteLine("Please enter the Email of the patient.");
+        string patientEmail = Console.ReadLine()!;
+
+        if (string.IsNullOrEmpty(patientTitle))
+        {
+            Console.BackgroundColor = ConsoleColor.Red;
+            Console.Clear();
+            Console.WriteLine("Invalid input entered. Press any key to continue.");
+            Console.ReadKey();
+            return;
+        }
+
+        // Patient Phone 
+        Console.WriteLine("Please enter the Phone of the patient.");
+        string patientPhone = Console.ReadLine()!;
+
+        if (string.IsNullOrEmpty(patientTitle))
+        {
+            Console.BackgroundColor = ConsoleColor.Red;
+            Console.Clear();
+            Console.WriteLine("Invalid input entered. Press any key to continue.");
+            Console.ReadKey();
+            return;
+        }
+
+        Dictionary<string, string> addressArr = [];
+
+        // Patient First Line Address 
+        Console.WriteLine("Please enter the First Line Address of the patient.");
+        string patientFAddress = Console.ReadLine()!;
+
+        if (string.IsNullOrEmpty(patientFAddress))
+        {
+            Console.BackgroundColor = ConsoleColor.Red;
+            Console.Clear();
+            Console.WriteLine("Invalid input entered. Press any key to continue.");
+            Console.ReadKey();
+            return;
+        } else
+        {
+            addressArr.Add("First Line:", patientFAddress);
+        }
+
+        // Patient Second Line Address 
+        Console.WriteLine("Please enter the Second Line Address of the patient.");
+        string patientSAddress = Console.ReadLine()!;
+
+        if (string.IsNullOrEmpty(patientSAddress))
+        {
+            Console.BackgroundColor = ConsoleColor.Red;
+            Console.Clear();
+            Console.WriteLine("Invalid input entered. Press any key to continue.");
+            Console.ReadKey();
+            return;
+        }
+        else
+        {
+            addressArr.Add("Second Line", patientSAddress);
+        }
+        // Patient Town/City Line Address 
+        Console.WriteLine("Please enter the Town/City of the patient.");
+        string patientTCAddress = Console.ReadLine()!;
+
+        if (string.IsNullOrEmpty(patientTCAddress))
+        {
+            Console.BackgroundColor = ConsoleColor.Red;
+            Console.Clear();
+            Console.WriteLine("Invalid input entered. Press any key to continue.");
+            Console.ReadKey();
+            return;
+        } else
+        {
+            addressArr.Add("Town", patientTCAddress);
+        }
+
+        // Patient County Address 
+        Console.WriteLine("Please enter the County of the patient.");
+        string patientCounAddress = Console.ReadLine()!;
+
+        if (string.IsNullOrEmpty(patientCounAddress))
+        {
+            Console.BackgroundColor = ConsoleColor.Red;
+            Console.Clear();
+            Console.WriteLine("Invalid input entered. Press any key to continue.");
+            Console.ReadKey();
+            return;
+        } else
+        {
+            addressArr.Add("County", patientCounAddress);
+        }
+        // Patient Postcode Address 
+        Console.WriteLine("Please enter the Postcode of the patient.");
+        string patientPAddress = Console.ReadLine()!;
+
+        if (string.IsNullOrEmpty(patientPAddress))
+        {
+            Console.BackgroundColor = ConsoleColor.Red;
+            Console.Clear();
+            Console.WriteLine("Invalid input entered. Press any key to continue.");
+            Console.ReadKey();
+            return;
+        } else
+        {
+            addressArr.Add("PostCode", patientPAddress);
+        }
+        // Patient Country Address 
+        Console.WriteLine("Please enter the Country of the patient.");
+        string patientCAddress = Console.ReadLine()!;
+
+        if (string.IsNullOrEmpty(patientCAddress))        {
+            Console.BackgroundColor = ConsoleColor.Red;
+            Console.Clear();
+            Console.WriteLine("Invalid input entered. Press any key to continue.");
+            Console.ReadKey();
+            return;
+        } else
+        {
+            addressArr.Add("Country", patientCAddress);
+        }
+
+        Console.WriteLine(addressArr.ToString());
+        Console.ReadKey();
+        // Create the patient record :D
+        patient.CreateNewPatient(patientTitle, patientName, patientEmail, patientPhone, addressArr, userCreator);
     }
 }
