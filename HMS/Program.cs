@@ -80,7 +80,7 @@ class Program
                             Console.WriteLine("");
                             Console.WriteLine("If you need any assistance, please contact the system administrator.");
                             Console.WriteLine("");
-                            Console.WriteLine("Extention: 010");
+                            Console.WriteLine("Extension: 010");
                             Console.WriteLine("Email: support@hms.local");
                             Console.WriteLine("");
                             Console.WriteLine("Press any key to return to the login screen.");
@@ -176,10 +176,70 @@ class Program
 
                                     if (validPermission)
                                     {
-                                        auth.CreateStaffUser("Test User", "test@test.com", "00000000", "global.nurse");
+                                        // Staff Name
+                                        Console.WriteLine("Please enter the Name of the staff member.");
+                                        string staffName = Console.ReadLine()!;
+
+                                        if (string.IsNullOrEmpty(staffName))
+                                        {
+                                            Console.BackgroundColor = ConsoleColor.Red;
+                                            Console.Clear();
+                                            Console.WriteLine("Invalid input entered. Press any key to continue.");
+                                            Console.ReadKey();
+                                            return;
+                                        }
+                                        
+                                        // Staff Name
+                                        Console.WriteLine("Please enter the Email of the staff member.");
+                                        string staffEmail = Console.ReadLine()!;
+
+                                        if (string.IsNullOrEmpty(staffEmail))
+                                        {
+                                            Console.BackgroundColor = ConsoleColor.Red;
+                                            Console.Clear();
+                                            Console.WriteLine("Invalid input entered. Press any key to continue.");
+                                            Console.ReadKey();
+                                            return;
+                                        }
+                                        
+                                        // Staff Name
+                                        Console.WriteLine("Please enter the Phone of the staff member.");
+                                        string staffPhone = Console.ReadLine()!;
+
+                                        if (string.IsNullOrEmpty(staffPhone))
+                                        {
+                                            Console.BackgroundColor = ConsoleColor.Red;
+                                            Console.Clear();
+                                            Console.WriteLine("Invalid input entered. Press any key to continue.");
+                                            Console.ReadKey();
+                                            Console.ResetColor();
+                                            Console.BackgroundColor = ConsoleColor.Black;
+                                            return;
+                                        }
+                                        
+                                        // Staff Name
+                                        Console.WriteLine("Please enter the Role of the staff member.\n");
+                                        Console.WriteLine("global.doctor");
+                                        Console.WriteLine("global.nurse");
+                                        Console.WriteLine("global.admin-staff");
+                                        Console.WriteLine("global.administrator");
+                                        Console.WriteLine("");
+                                        string staffRole = Console.ReadLine()!;
+
+                                        if (string.IsNullOrEmpty(staffRole))
+                                        {
+                                            Console.BackgroundColor = ConsoleColor.Red;
+                                            Console.Clear();
+                                            Console.WriteLine("Invalid input entered. Press any key to continue.");
+                                            Console.ReadKey();
+                                            return;
+                                        }
+                                        
+                                        auth.CreateStaffUser(staffName, staffEmail, staffPhone, staffRole);
                                     }
                                     else
                                     {
+                                        utility.WriteToLogFile($"(AUTH) The user {auth.Name} ({auth.Id}) is unauthorised to submit a user for the system to create.");
                                         Console.BackgroundColor = ConsoleColor.Red;
                                         Console.Clear();
                                         Console.WriteLine("[401] Unauthorised. If there is a problem contact the system administrator.\n\nPress any key to continue.");

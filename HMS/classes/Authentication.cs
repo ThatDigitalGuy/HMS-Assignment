@@ -4,7 +4,7 @@ namespace HMS.classes;
 
 public class Authentication
 {
-    Utility _utils = new Utility();
+    Utility _utils = new();
     
     // The data structure for authentication class
     #region AuthenticationProps
@@ -25,7 +25,7 @@ public class Authentication
         _utils.WriteToLogFile($"{userId} is trying to do '{activity}'.");
 
         // Gets the file and reads all text
-        var jsonString = File.ReadAllText(_utils.roleFilePath);
+        var jsonString = File.ReadAllText(_utils.RoleFilePath);
         
         // Deserialises the auth.json file to a list.
         List<Roles>? roleList = JsonConvert.DeserializeObject<List<Roles>>(jsonString);
@@ -60,9 +60,9 @@ public class Authentication
         _utils.WriteToLogFile($"(AUTH) Trying to authenticate user with the email '{email}'.");
         
         // Gets the file and reads all text
-        var jsonString = File.ReadAllText(_utils.AuthFilePath);
+        var jsonString = File.ReadAllText(Utility.AuthFilePath);
         
-        // Deserialises the auth.json file to a list.
+        // Deserializes the auth.json file to a list.
         List<Authentication>? authList = JsonConvert.DeserializeObject<List<Authentication>>(jsonString);
 
         // Checks if any record is valid
@@ -112,7 +112,7 @@ public class Authentication
     {
         Console.Clear();
         _utils.WriteToLogFile($"(AUTH) The user {Name} ({Id}) has submitted a user ({email}) for the system to create.");
-        var jsonString = File.ReadAllText(_utils.AuthFilePath);
+        var jsonString = File.ReadAllText(Utility.AuthFilePath);
         List<Authentication>? userObj = JsonConvert.DeserializeObject<List<Authentication>>(jsonString);
 
         var rand = new Random();
@@ -129,6 +129,25 @@ public class Authentication
             
         // Serialise to json
         jsonString = JsonConvert.SerializeObject(userObj, Formatting.Indented);
-        File.WriteAllText(_utils.AuthFilePath, jsonString);
+        try
+        {
+            File.WriteAllText(Utility.AuthFilePath, jsonString);
+            _utils.WriteToLogFile($"{Name} ({Id}) has successfully created the user with the email {email}.");
+        }
+        catch (Exception e)
+        {
+            _utils.WriteToLogFile($"An error occured when creating a user. {e.Message}.");
+            
+            Console.BackgroundColor = ConsoleColor.Red;
+            Console.Clear();
+            Console.WriteLine($"[500] There has been a error.\n{e.Message}\nPress any key to continue.");
+            Console.ReadKey();
+            Console.ResetColor();
+            Console.BackgroundColor = ConsoleColor.Black;
+            return;
+        }
     }
+
+    
 }
+

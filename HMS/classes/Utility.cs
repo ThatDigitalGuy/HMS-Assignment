@@ -6,14 +6,16 @@ public class Utility
 {
     #region UtitlityVariables
 
-    public string LogPrefix = $"[{DateTime.UtcNow.ToString()}]";
-    public string AuthFilePath = "./auth.json";
-    public string patientDirectory = "./Patients";
+    private readonly string _logPrefix = $"[{DateTime.UtcNow.ToString()}]";
+    public const string AuthFilePath = "./auth.json";
+    private const string PatientDirectory = "./Patients";
+
     private string _logDirectory = "./Logs";
     // Learnt DateTime from https://www.c-sharpcorner.com/blogs/date-and-time-format-in-c-sharp-programming1
-    internal string LogFilePath = $"./Logs/log_{DateTime.Now.ToString("ddMMyyyy")}.txt";
-    public string roleFilePath = "./roles.json";
-
+    internal readonly string LogFilePath = $"./Logs/log_{DateTime.Now.ToString("ddMMyyyy")}.txt";
+    public readonly string RoleFilePath = "./roles.json";
+    
+    
     #endregion
     
     #region InitialiseApplication
@@ -28,7 +30,8 @@ public class Utility
     public void InitialiseApplication()
     {
         // I used W3Schools and the Microsoft Documentation to assist me with files in c#.
-
+        Assistance assitance = new Assistance();
+            
         #region LogFile
 
         if (!Directory.Exists(_logDirectory))
@@ -44,7 +47,7 @@ public class Utility
             // _logWriter = new StreamWriter(LogFilePath);
             //
             // _logWriter.Write($"[LOG > APP | START-UP] Created '{_logDirectory}' directory and '{LogFilePath}' file.");
-            WriteToLogFile($"{LogPrefix} Created '{_logDirectory}' directory and '{LogFilePath}' file.");
+            WriteToLogFile($"{_logPrefix} Created '{_logDirectory}' directory and '{LogFilePath}' file.");
         }
         
 
@@ -53,16 +56,16 @@ public class Utility
         #region PatientFolderExist
 
         // Checks to see if the patient folder exists.
-        if (!Directory.Exists(patientDirectory))
+        if (!Directory.Exists(PatientDirectory))
         {
-            WriteToLogFile($"[APP | Start-up] INFO > '{patientDirectory}' folder doesn't exist. Creating...");
+            WriteToLogFile($"[APP | Start-up] INFO > '{PatientDirectory}' folder doesn't exist. Creating...");
             
             // Create a folder for the patient records.
-            Directory.CreateDirectory(patientDirectory);
+            Directory.CreateDirectory(PatientDirectory);
         }
         else
         {
-            Console.WriteLine($"[APP | Start-up] INFO > '{patientDirectory}' folder exists.");
+            Console.WriteLine($"[APP | Start-up] INFO > '{PatientDirectory}' folder exists.");
         }
         #endregion
 
@@ -88,7 +91,7 @@ public class Utility
         if (File.ReadAllText(AuthFilePath) == "")
         {
             WriteToLogFile($"[APP | Start-up] INFO > '{AuthFilePath}' is empty. Creating new admin user...");
-            List<Authentication> userObj = new List<Authentication>();
+            List<Authentication> userObj = new();
             
             // Creating a default admin user
             userObj.Add(new Authentication
@@ -110,7 +113,7 @@ public class Utility
 
         #region RolesFile
 
-        if (File.Exists(roleFilePath))
+        if (File.Exists(RoleFilePath))
         {
             return;
         }
@@ -118,10 +121,10 @@ public class Utility
         {
             try
             {
-                File.Create(roleFilePath).Close();
+                File.Create(RoleFilePath).Close();
                 
-                var jsonString = File.ReadAllText(roleFilePath);
-                List<Roles> userObj = new List<Roles>();
+                var jsonString = File.ReadAllText(RoleFilePath);
+                List<Roles> userObj = new();
                 
                 userObj.Add(new Roles
                 {
@@ -154,13 +157,13 @@ public class Utility
                 userObj.Add(new Roles
                 {
                     Id = "003",
-                    Name = "Admin",
-                    PermissionName = "global.admin",
+                    Name = "Admin Staff",
+                    PermissionName = "global.admin-staff",
                     Permissions = []
                 });
                 
                 jsonString = JsonConvert.SerializeObject(userObj, Formatting.Indented);
-                File.WriteAllText(roleFilePath, jsonString);
+                File.WriteAllText(RoleFilePath, jsonString);
             }
             catch (Exception e)
             {
@@ -170,6 +173,14 @@ public class Utility
         }
 
         #endregion
+
+        #region AudioTesting
+
+        assitance.TestModule();
+
+        #endregion
+
+        Console.Title = "HMS.local";
     }
 
     #endregion
@@ -179,7 +190,7 @@ public class Utility
     {
         try
         {
-            File.AppendAllText(LogFilePath, $"{LogPrefix}{data}\n");
+            File.AppendAllText(LogFilePath, $"{_logPrefix}{data}\n");
         }
         catch (Exception e)
         {
@@ -206,12 +217,12 @@ public class Utility
     
     
     // Pulls the authentication users from auth file.
-    public void ReadFromAuthFile()
+    /*public void ReadFromAuthFile()
     {
         string jsonString = File.ReadAllText(AuthFilePath);
         
         Console.WriteLine(jsonString);
-    }
+    }*/
     
     // Generate random password
     public string GenerateRandomPassword()
@@ -221,6 +232,7 @@ public class Utility
         return rand.Next(10000, 100000).ToString();
     }
     
+    // Creates a Patient record in "./Patients"
     public void CreatePatient(string userCreator)
     {
         Patient patient = new Patient();
@@ -313,9 +325,9 @@ public class Utility
         }
         // Patient Town/City Line Address 
         Console.WriteLine("Please enter the Town/City of the patient.");
-        string patientTCAddress = Console.ReadLine()!;
+        string patientTcAddress = Console.ReadLine()!;
 
-        if (string.IsNullOrEmpty(patientTCAddress))
+        if (string.IsNullOrEmpty(patientTcAddress))
         {
             Console.BackgroundColor = ConsoleColor.Red;
             Console.Clear();
@@ -324,7 +336,7 @@ public class Utility
             return;
         } else
         {
-            addressArr.Add("Town", patientTCAddress);
+            addressArr.Add("Town", patientTcAddress);
         }
 
         // Patient County Address 
@@ -376,5 +388,34 @@ public class Utility
         Console.ReadKey();
         // Create the patient record :D
         patient.CreateNewPatient(patientTitle, patientName, patientEmail, patientPhone, addressArr, userCreator);
+    }
+
+    // Create a new Doctor
+    public void CreateDoctor(string userCreator)
+    {
+        
+    }
+    
+    // Test Code
+    public void SystemCheck()
+    {
+        Utility utils = new Utility();
+        Assistance assistance = new Assistance();
+        utils.WriteToLogFile("[SysCheck] Running System Check (SysCheck).");
+
+        #region FileStructure
+
+        int count = 0;
+        utils.WriteToLogFile("[SysCheck] Checking the system structure.");
+        
+        // Check if the patient records exists
+        if (Directory.Exists(PatientDirectory))
+        {
+            
+        }
+
+        #endregion
+        
+        
     }
 }

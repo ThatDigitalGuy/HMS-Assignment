@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using System.Globalization;
+using Newtonsoft.Json;
 using HMS.classes;
 
 namespace HMS.classes
@@ -17,17 +18,19 @@ namespace HMS.classes
     // Patient Class
     class Patient : Person
     {
-        private Utility utils = new Utility();
-        private List<Dictionary<string, string>> PatientNotes { get; set; } = new List<Dictionary<string, string>>();
-        private List<Dictionary<string, string>> PatientAppointments { get; set; } = new List<Dictionary<string, string>>();
-        private List<Dictionary<string, string>> PatientMedical { get; set; } = new List<Dictionary<string, string>>();
-        private List<Dictionary<string, string>> PatientPrescriptions { get; set; } = new List<Dictionary<string, string>>();
+        private Utility _utils = new();
+        
+        private List<Dictionary<string, string>> PatientNotes { get; set; } = new();
+        private List<Dictionary<string, string>> PatientAppointments { get; set; } = new();
+        private List<Dictionary<string, string>> PatientMedical { get; set; } = new();
+        private List<Dictionary<string, string>> PatientPrescriptions { get; set; } = new();
 
         // Creates a new patient record file.
         public void CreateNewPatient(string title, string name, string email, string phone, Dictionary<string, string> address, string userCreator)
         {
-            utils.WriteToLogFile($"(Patient | CREATE) {userCreator} has started to create a user.");
-            List<Patient> patientObj = new List<Patient>();
+            
+            _utils.WriteToLogFile($"(Patient | CREATE) {userCreator} has started to create a user.");
+            List<Patient> patientObj = new();
 
             var rand = new Random();
 
@@ -45,7 +48,7 @@ namespace HMS.classes
                 } else
                 {
                     patientFileCheck = false;
-                    utils.WriteToLogFile($"(Patient | CREATE) The new user ID is {nextGenId} and file stored in {patientRecordFile}.");
+                    _utils.WriteToLogFile($"(Patient | CREATE) The new user ID is {nextGenId} and file stored in {patientRecordFile}.");
                     break;
                 }
             }
@@ -91,7 +94,7 @@ namespace HMS.classes
             }
             catch (Exception ex)
             {
-                utils.WriteToLogFile($"(AUTH) Error has occurred: {ex.ToString()}.");
+                _utils.WriteToLogFile($"(AUTH) Error has occurred: {ex.ToString()}.");
             }
         }
     }
@@ -99,13 +102,20 @@ namespace HMS.classes
     // Doctor Class
     class Doctor : Person
     {
-        
+        public required Dictionary<string, string> Credentials { get; set; }
+        public required string[] Patients { get; set; }
+
+        public void CreateNewDoctor(string title, string name, string email, string phone,
+            Dictionary<string, string> address, string userCreator)
+        {
+            
+        }
     }
     
     // Nurse
     class Nurse : Person
     {
-        
+        public required Dictionary<string, string> Credentials { get; set; }
     }
     
     // Admin Staff
