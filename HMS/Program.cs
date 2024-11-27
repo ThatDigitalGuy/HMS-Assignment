@@ -176,6 +176,7 @@ class Program
 
                                     if (validPermission)
                                     {
+                                        Console.Clear();
                                         // Staff Name
                                         Console.WriteLine("Please enter the Name of the staff member.");
                                         string staffName = Console.ReadLine()!;
@@ -188,7 +189,8 @@ class Program
                                             Console.ReadKey();
                                             return;
                                         }
-                                        
+                                        Console.Clear();
+
                                         // Staff Name
                                         Console.WriteLine("Please enter the Email of the staff member.");
                                         string staffEmail = Console.ReadLine()!;
@@ -201,6 +203,7 @@ class Program
                                             Console.ReadKey();
                                             return;
                                         }
+                                        Console.Clear();
                                         
                                         // Staff Name
                                         Console.WriteLine("Please enter the Phone of the staff member.");
@@ -216,6 +219,7 @@ class Program
                                             Console.BackgroundColor = ConsoleColor.Black;
                                             return;
                                         }
+                                        Console.Clear();
                                         
                                         // Staff Name
                                         Console.WriteLine("Please enter the Role of the staff member.\n");
@@ -234,6 +238,7 @@ class Program
                                             Console.ReadKey();
                                             return;
                                         }
+                                        Console.Clear();
                                         
                                         auth.CreateStaffUser(staffName, staffEmail, staffPhone, staffRole);
                                     }

@@ -185,6 +185,12 @@ public class Utility
 
     #endregion
 
+    class UserCreator
+    {
+        public string userId { get; set; } = String.Empty;
+        public string userName { get; set; } = String.Empty;
+    }
+    
     // Global Write to the Log File.
     public void WriteToLogFile(string data)
     {
@@ -387,7 +393,7 @@ public class Utility
         Console.WriteLine(addressArr.ToString());
         Console.ReadKey();
         // Create the patient record :D
-        patient.CreateNewPatient(patientTitle, patientName, patientEmail, patientPhone, addressArr, userCreator);
+        //patient.CreateNewPatient(patientTitle, patientName, patientEmail, patientPhone, addressArr, userCreator);
     }
 
     // Create a new Doctor
