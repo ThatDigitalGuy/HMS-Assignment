@@ -169,7 +169,7 @@ class Program
                                     break;
                                 case "1":
                                     Console.Clear();
-                                    person.UserManagement();
+                                    person.UserManagement(auth);
                                     break;
                                 
                                 case "3":

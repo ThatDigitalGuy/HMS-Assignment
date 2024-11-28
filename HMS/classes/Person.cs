@@ -22,7 +22,7 @@ namespace HMS.classes
         public string ModifiedBy { get; set; } = String.Empty;
 
         // Manage Patient Menu
-        public void UserManagement()
+        public void UserManagement(Authentication authUser)
         {
             bool menuActive = true;
             string userGroup = "Patient";
@@ -44,8 +44,8 @@ namespace HMS.classes
                 
                 Console.Write("\n");
                 
-                if (userGroup == "Patient") {Console.WriteLine("[q] to exit, [s] to search, [r] to see staff, [return] to select");}
-                if (userGroup == "Staff") { Console.WriteLine("[q] to exit, [s] to search, [r] to see patients, [return] to select"); }
+                if (userGroup == "Patient") {Console.WriteLine("[q] to exit, [c] to create user, [s] to search, [r] to see staff, [return] to select");}
+                if (userGroup == "Staff") { Console.WriteLine("[q] to exit, [c] to create user, [s] to search, [r] to see patients, [return] to select"); }
                 
                 Console.Write("\n");
 
@@ -53,14 +53,14 @@ namespace HMS.classes
 
                 if (userGroup == "Patient")
                 {
-                    var userDir = Directory.GetFiles("./Patients", "*-record.json");
+                    string[] userDir = Directory.GetFiles("./Patients", "*-record.json");
 
                     foreach (var user in userDir)
                     {
                         var fileUser = File.ReadAllText(user);
-                        var person = JsonConvert.DeserializeObject<Patient>(fileUser);
+                        List<Patient> person = JsonConvert.DeserializeObject<List<Patient>>(fileUser);
                         
-                        Console.Write($"{person.ID} {person.FirstName} {person.LastName}");
+                        Console.WriteLine($" {person[0].ID}  |    {person[0].FirstName} {person[0].LastName}    |   {person[0].Email}  |    {person[0].Phone}");
                     }
                 }
                 
@@ -92,6 +92,21 @@ namespace HMS.classes
                             break;
                         }
 
+                        break;
+                    case 'c':
+                        if (userGroup == "Staff")
+                        {
+                            Console.WriteLine("Create Staff");
+                        }
+
+                        if (userGroup == "Patient")
+                        {
+                            Utility _utility = new Utility();
+                            
+                            Console.Clear();
+                            
+                            _utility.CreatePatient(authUser.Id, authUser.Name);
+                        }
                         break;
                     default:
                         Console.Clear();
