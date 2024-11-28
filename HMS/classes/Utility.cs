@@ -239,7 +239,7 @@ public class Utility
     }
     
     // Creates a Patient record in "./Patients"
-    public void CreatePatient(string userCreator)
+    public void CreatePatient(string userId, string userName)
     {
         Patient patient = new Patient();
         // Patient Title
@@ -257,10 +257,23 @@ public class Utility
 
 
         // Patient Name
-        Console.WriteLine("Please enter the Name of the patient.");
-        string patientName = Console.ReadLine()!;
+        Console.WriteLine("Please enter the First Name of the patient.");
+        string patientFirstName = Console.ReadLine()!;
 
-        if (string.IsNullOrEmpty(patientName))
+        if (string.IsNullOrEmpty(patientFirstName))
+        {
+            Console.BackgroundColor = ConsoleColor.Red;
+            Console.Clear();
+            Console.WriteLine("Invalid input entered. Press any key to continue.");
+            Console.ReadKey();
+            return;
+        }
+        
+        // Patient Name
+        Console.WriteLine("Please enter the Last Name of the patient.");
+        string patientLastName = Console.ReadLine()!;
+
+        if (string.IsNullOrEmpty(patientLastName))
         {
             Console.BackgroundColor = ConsoleColor.Red;
             Console.Clear();
@@ -394,6 +407,7 @@ public class Utility
         Console.ReadKey();
         // Create the patient record :D
         //patient.CreateNewPatient(patientTitle, patientName, patientEmail, patientPhone, addressArr, userCreator);
+        patient.Create(patientTitle, patientFirstName, patientLastName, patientEmail, patientPhone, addressArr, userId, userName);
     }
 
     // Create a new Doctor

@@ -7,7 +7,7 @@ namespace HMS.classes
     /// <summary>
     /// This is the class that gives you a structure on a person in the system.
     /// </summary>
-    internal class Person
+    class Person
     {
         public string ID { get; set; } = String.Empty;
         public string Title { get; set; } = String.Empty;
@@ -15,13 +15,93 @@ namespace HMS.classes
         public string LastName { get; set; } = String.Empty;
         public string Email { get; set; } = String.Empty;
         public string Phone { get; set; } = String.Empty;
-        public string[] Address { get; set; } = [];
+        public Dictionary<string, string> Address { get; set; } = [];
         public string CreatedAt { get; set; } = String.Empty;
         public string CreatedBy { get; set; } = String.Empty;
         public string LastModified { get; set; } = String.Empty;
         public string ModifiedBy { get; set; } = String.Empty;
 
-        // Creates the patient class that inherits the properties from the Persons class
+        // Manage Patient Menu
+        public void UserManagement()
+        {
+            bool menuActive = true;
+            string userGroup = "Patient";
+            
+            while (menuActive)
+            {
+                Console.Clear();
+                if (userGroup == "Patient") { Console.BackgroundColor = ConsoleColor.DarkMagenta; }
+                if (userGroup == "Staff") { Console.BackgroundColor = ConsoleColor.DarkBlue; }
+                Console.ForegroundColor = ConsoleColor.White;
+            
+                Console.Write($"   {userGroup}   ");
+                Console.BackgroundColor = ConsoleColor.White;
+                Console.ForegroundColor = ConsoleColor.Black;
+                Console.Write("         User Management | V 0.1         \n");
+                
+                Console.ResetColor();
+                Console.ForegroundColor = ConsoleColor.Gray;
+                
+                Console.Write("\n");
+                
+                if (userGroup == "Patient") {Console.WriteLine("[q] to exit, [s] to search, [r] to see staff, [return] to select");}
+                if (userGroup == "Staff") { Console.WriteLine("[q] to exit, [s] to search, [r] to see patients, [return] to select"); }
+                
+                Console.Write("\n");
+
+                #region ListUsers
+
+                if (userGroup == "Patient")
+                {
+                    var userDir = Directory.GetFiles("./Patients", "*-record.json");
+
+                    foreach (var user in userDir)
+                    {
+                        var fileUser = File.ReadAllText(user);
+                        var person = JsonConvert.DeserializeObject<Patient>(fileUser);
+                        
+                        Console.Write($"{person.ID} {person.FirstName} {person.LastName}");
+                    }
+                }
+                
+                if (userGroup == "Staff")
+                {
+                    Console.WriteLine("Staff");
+                }
+
+                #endregion
+                
+                
+                ConsoleKeyInfo key = Console.ReadKey(true);
+
+                switch (key.KeyChar)
+                {
+                    case 'q':
+                        menuActive = false;
+                        break;
+                    case 'r':
+                        if (userGroup == "Patient")
+                        {
+                            userGroup = "Staff";
+                            break;
+                        }
+
+                        if (userGroup == "Staff")
+                        {
+                            userGroup = "Patient";
+                            break;
+                        }
+
+                        break;
+                    default:
+                        Console.Clear();
+                        Console.WriteLine("Invalid input. Please try again. Press any key to return.");
+                        Console.ResetColor();
+                        Console.ReadKey();
+                        break;
+                }
+            }
+        }
     }
 
     /// <summary>
@@ -73,13 +153,17 @@ namespace HMS.classes
         /// <param name="phone">string</param>
         /// <param name="address">dictionary (string, string)</param>
         /// <param name="userCreator">string</param>
-        public void Create(string title, string firstname,string lastname, string email, string phone, string[] address, string creatorId, string createrName)
+        public void Create(string title, string firstname,string lastname, string email, string phone, Dictionary<string, string> address, string creatorId, string createrName)
         {
-            #region badCodeL
-            /*
-            _utils.WriteToLogFile($"(Patient | CREATE) {userCreator} has started to create a user.");
+            _utils.WriteToLogFile($"[PERSON (patient) | Create] {email} is being created.");
+            
+            if (String.IsNullOrEmpty(email)) return;
+
+            
+            // Creates a new patients.
             List<Patient> patientObj = new();
 
+            #region GenerateID
             var rand = new Random();
 
             bool patientFileCheck = true;
@@ -98,86 +182,6 @@ namespace HMS.classes
                     patientFileCheck = false;
                     _utils.WriteToLogFile($"(Patient | CREATE) The new user ID is {nextGenId} and file stored in {patientRecordFile}.");
                     break;
-                }
-            }
-
-            
-
-            patientObj.Add(new Patient
-            {
-                Id = nextGenId,
-                Title = title,
-                Name = name,
-                Email = email,
-                Phone = phone,
-                Address = address,
-                PatientNotes = [],
-                PatientAppointments = [],
-                PatientMedical = [],
-                PatientPrescriptions = []
-            });
-
-            if (!File.Exists(patientRecordFile))
-            {
-                File.Create(patientRecordFile).Close();
-            }
-
-            var jsonObject = JsonConvert.SerializeObject(patientObj, Formatting.Indented);
-
-            try
-            {
-                File.WriteAllText(patientRecordFile, jsonObject);
-
-                Console.BackgroundColor = ConsoleColor.DarkGreen;
-                Console.Clear();
-                Console.WriteLine("Patient has been Created.\n\nPatient Details:\n");
-                Console.WriteLine($"Patient ID: {nextGenId}");
-                Console.WriteLine($"Patient Title: {title}");
-                Console.WriteLine($"Patient Name: {name}");
-                Console.WriteLine($"Patient Email: {email}");
-                Console.WriteLine($"Patient Phone: {phone}");
-                Console.WriteLine($"\n");
-                Console.WriteLine("Press any key to continue...");
-                Console.ReadKey();
-            }
-            catch (Exception ex)
-            {
-                _utils.WriteToLogFile($"(AUTH) Error has occurred: {ex.ToString()}.");
-            }
-            */
-            #endregion
-            
-            _utils.WriteToLogFile($"[PERSON (patient) | Create] {email} is being created.");
-            
-            if (String.IsNullOrEmpty(email)) return;
-
-            
-            // Creates a new patients.
-            string id = null;
-            List<Patient> patientObj = new();
-
-            #region GenerateID
-
-            bool active = true;
-
-            while (active)
-            {
-                id = _utils.GenerateRandomPassword();
-
-                if (File.Exists($"/Patients/{id}-record.json"))
-                {
-                    return;
-                }
-                else
-                {
-                    id = ID;
-                    
-                    File.Create($"/Patients/{ID}-record.json").Close();
-                    
-                    _utils.WriteToLogFile($"[PERSON (patient) | Create] '/Patients/{ID}-record.json' has just been created.");
-                    
-                    active = false;
-                    return;
                 }
             }
 
@@ -206,7 +210,7 @@ namespace HMS.classes
             
             patientObj.Add(new Patient()
             {
-                ID = id,
+                ID = nextGenId,
                 FirstName = firstname,
                 LastName = lastname,
                 Email = email,
@@ -226,12 +230,12 @@ namespace HMS.classes
 
             try
             {
-                File.WriteAllText($"/Patients/{ID}-record.json", jsonObject);
+                File.WriteAllText(patientRecordFile, jsonObject);
 
                 Console.BackgroundColor = ConsoleColor.DarkGreen;
                 Console.Clear();
                 Console.WriteLine("Patient has been Created.\n\nPatient Details:\n");
-                Console.WriteLine($"Patient ID: {ID}");
+                Console.WriteLine($"Patient ID: {nextGenId}");
                 Console.WriteLine($"Patient Title: {title}");
                 Console.WriteLine($"Patient Name: {firstname} {lastname}");
                 Console.WriteLine($"Patient Email: {email}");
@@ -258,11 +262,31 @@ namespace HMS.classes
         {
             
         }
-        
+
         /// <summary>
         /// Deletes a user by ID.
         /// </summary>
         /// <param name="id">The Patient ID you wish to delete.</param>
-        public void Delete(string id) {}
+        public void Delete(string id)
+        {
+            Console.Clear();
+            
+            Console.BackgroundColor = ConsoleColor.DarkRed;
+            Console.ForegroundColor = ConsoleColor.White;
+            
+            Console.WriteLine(@"$$\      $$\                               $$\                     
+$$ | $\  $$ |                              \__|                    
+$$ |$$$\ $$ | $$$$$$\   $$$$$$\  $$$$$$$\  $$\ $$$$$$$\   $$$$$$\  
+$$ $$ $$\$$ | \____$$\ $$  __$$\ $$  __$$\ $$ |$$  __$$\ $$  __$$\ 
+$$$$  _$$$$ | $$$$$$$ |$$ |  \__|$$ |  $$ |$$ |$$ |  $$ |$$ /  $$ |
+$$$  / \$$$ |$$  __$$ |$$ |      $$ |  $$ |$$ |$$ |  $$ |$$ |  $$ |
+$$  /   \$$ |\$$$$$$$ |$$ |      $$ |  $$ |$$ |$$ |  $$ |\$$$$$$$ |
+\__/     \__| \_______|\__|      \__|  \__|\__|\__|  \__| \____$$ |
+                                                         $$\   $$ |
+                                                         \$$$$$$  |
+                                                          \______/");
+            Console.WriteLine("");
+            Console.WriteLine("Are you sure you want to delete the following user?");
+        }
     }
 }

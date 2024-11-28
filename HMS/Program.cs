@@ -130,6 +130,7 @@ class Program
                         Console.Clear();
 
                         bool adminSectionActive = true;
+                        Person person = new();
 
                         while (adminSectionActive)
                         {
@@ -168,7 +169,7 @@ class Program
                                     break;
                                 case "1":
                                     Console.Clear();
-                                    utility.CreatePatient(auth.Id);
+                                    person.UserManagement();
                                     break;
                                 
                                 case "3":
